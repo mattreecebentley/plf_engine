@@ -1,0 +1,5 @@
+Experiment with removing texture pointer from plf::texture and just getting it from atlas pointer instead.
+Needs benchmarks
+
+Remove all unsigned int, replace with int and < 0 asserts in functions.
+The original plan did a good job of stopping the developer from putting in negative values, but is unnneccesary and requires a lot of static_cast conversions afterwards.

@@ -1,0 +1,2 @@
+Separate 'intro' sections on pieces of music play very quietly for some reason. Sometimes they play more quietly than at other times.
+Not sure about reason for this.

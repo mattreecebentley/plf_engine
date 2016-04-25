@@ -1,0 +1,23 @@
+When I designed this I was looking for 3 things:
+1. A library that would be simple
+2. A library that would be fast
+3. A library that would run on the majority of hardware.
+
+SDL by itself was not a candidate as it is very much a 'starting blocks' approach to building an engine, and C-style.
+SFML was not a candidate because it requires opengl 2, which rules out most older hardware - which is ridiculous for 2D games. I did look at game engines like gamemaker etc but the conclusion was that it would take me about as long to learn them as to code my own. So I decided to build one on top of SDL, SDL_image etc.
+
+It took me a little over a year to code my library, and it works very well. Rather efficiently, though if I had done it as an ECS it may've been more efficient. At any rate, it did everything I wanted and has the feature set that I was looking for, primarily:
+* Support for textures larger than the maximum video card hardware texture resolution
+* Realtime dynamic texture atlasing
+* Collision detection using realtime persistent quadtrees
+* Multiple layers
+* 32-bit and transparency support
+
+I would like to support sprite-batching but SDL doesn't support that as yet - I have been assured they are working on it.
+
+I have done all the heavy-lifting for you, you just need to pick up the pieces and refine.
+
+If I were to do the library again, there would be a lot of things I would do differently - most importantly I probably would ditch the passing around and caching of more-or-less global aspects of the code - like the renderer pointer - and just make them global, or some similar mechanism. On the other hand, that's a good way of learning about the inherent deficiencies in object-oriented code, if you're going to take a purist approach.
+
+Cheers!
+M@

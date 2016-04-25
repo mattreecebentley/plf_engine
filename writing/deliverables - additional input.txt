@@ -1,0 +1,39 @@
+1. Final version of the library (v1.01 or whatever) available in both source code and runtime library forms (ie. dlls, .lib, .a etc) for the following platforms:
+* Windows
+* Mac
+* Linux
+
+To understand the difference between these two have a look on the download page for SDL2.
+
+The advantage of a runtime library version is that you should be able to statically link SDL, SDL_image and SDL_mixer into it, meaning the end-user shouldn't need to install those libraries in order to use this library. The Zlib license which SDL etc are under permits this.
+If this is found to be unworkable for some reason, simply the source code + instructions on how to set up and link against SDL, SDL_image and SDL_mixer for the two major compilers (MSVC and gcc) will be sufficient.
+
+The advantage of a source code version is that the end user can modify the code and use their own version of SDL et al.
+
+
+2. Full documentation of the library (except for plf::stack and plf::colony), in basic HTML 4.01 transitional + css2.
+Amaya is a good free WYSIWYG HTML editor to use for this. I will supply a .css file, and the per-function documentation should more-or-less follow the format on plflib.org (name, description, example code, anything else you see fit to include). How you structure it above that level, for example for classes and for the general overview, is more-or-less up to you. Functions which are not useful to developers, such as most of the quadtree functions, may be skipped for documentation. Documentation should provide top-down overview of the most common approach to usage as described in library overview, and should make clear which areas are unnecessary to learn for general usage (eg. the texture classes).
+
+
+3. A working small game using the library as a test case for end users.
+Game should demonstrate the use of:
+layers,
+entities,
+backgrounds,
+sprites (in entities or outside if preferred),
+basic library-supplied physics/movement,
+parallax scrolling,
+at least 1 texture which is larger than the screen size (which will force the library to use the multitexture class) eg. a background,
+music,
+sound.
+
+You can also include any short demos you develop as further demonstrations of functionality if you like.
+
+
+4. Add a function - either through plf::engine or through plf::engine->atlas_manager - to specify the size of texture atlases ie. to override the default texture atlas size. By default this whichever is smallest: the renderer resolution or the maximum texture resolution on the video card - which is further reduced down to the nearest power-of-two in both height and width, to accomodate older video cards. Keeping the texture size as a power-of-two may also confer some performance benefits on some cards.
+
+
+5. Ascertain while working on demos and game etc whether current form of movement code is sufficient, if so, simply use it, if not, modify it to taste. I do not believe anything but actually constructing a game/demo will provide adequate feedback for you to make this evaluation.
+
+
+6. The library and game must be tested cross-platform (linux, mac, windows) and cross-compiler (gcc, clang, msvc) and bugs resolved.

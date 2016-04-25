@@ -1,0 +1,16 @@
+1. The following are very useful to watch if you plan to work in games:
+- Mike Acton's Data-oriented design:
+https://www.youtube.com/watch?v=rX0ItVEVjHc
+- Jonathan Blow's perspective on optimisation and programming independent games:
+https://www.youtube.com/watch?v=JjDsP5n2kSM
+- Scott Wardle of EA, talking about EAs internal systems - useful if you want to see how complicated and nitty-gritty AAA game development is now.
+https://www.youtube.com/watch?v=8KIvWJUYbDA
+
+
+2. If you're stuck on a problem - run, or something. It may sound either pedantic or didactic but exercise is a good thing. Makes you smarter (www.bbc.com/future/story/20141010-why-exercise-boosts-iq), lowers stress and probably does some good things for your body or something. Good habit to get into if you're planning to be a programmer all your life.
+
+
+3. Stay off stackoverflow if you can - good for grabbing a fish, not good for learning to fish
+
+
+4. I find it useful, when tidying up code, to comment the reasons for including a particular header file in a particular bunch of code, when it's not something immediately obvious (like iostream). This can make things a bit easier to comprehend later on.

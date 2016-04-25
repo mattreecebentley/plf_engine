@@ -1,0 +1,50 @@
+Before this project starts you each need to have completed the following:
+1. Installed both IDEs and gotten your heads around them.
+2. Installed clang, GCC TDM x64 and set up your codelite environment so you can build with them.
+3. Installed git.
+4. Done a few basic programs using SDL so you understand how it works. Use lazyfoo's tutorials as a guide - probably just the first 2 or 3: http://lazyfoo.net/tutorials/SDL/
+5. Created an account on udacity.com, done as much of the free GIT paper as you feel you need to understand the subject properly.
+6. Gone on github, created an account, created a test project, used the git gui to clone the project to a local drive, set up an SDL project in that folder, use the git GUI to merge the changes back into the github project.
+7. Made a working C++ template function (anything will do, understanding the concept is important and how they work).
+
+
+Obviously if you've done a lot of work with GIT before you can skip 5 and 6 if you feel comfortable with doing so.
+
+
+In addition you should understand the following things:
+- differences between static_cast, reinterpret_cast, C-style casts
+- What a quadtree is
+- What a texture atlas is
+- The concept of draw culling
+- The difference between an SDL_Renderer and an SDL_Window
+- The concept of object slicing
+- Virtual functions and inheritance
+- Why sleep functions which release processor time to the OS don't work well for games (because OS timeslices are often higher than 1/60th of a second). Understand what OS timeslices are and how they differ from OS to OS.
+- Pointer/iterator invalidation rules for different STL data containers, particularly vector.
+- plf::colony: plflib.org/colony.htm
+- Understand Mike Acton's perspective on data-oriented design.
+- read the following articles:
+http://number-none.com/blow/john_carmack_on_inlined_code.html
+http://gafferongames.com/game-physics/fix-your-timestep/
+The timestep one may take several reads to understand. The gist of it is, delta time (the amount of time elapsed in an inner game loop from one loop cycle to the next) is tricky to deal with. We don't deal with it explicitly in the library, but we supply delta to each of the components in the game. How you deal with it in your demo game is your call entirely.
+- Entity component systems vs Object-oriented systems:
+http://www.codeofhonor.com/blog/tough-times-on-the-road-to-starcraft
+http://www.roguebasin.com/index.php?title=Entity_Component_System
+Please note this library is object-oriented, largely. If I were to completely re-write it, it would be ECS. It's just helpful to understand the distinction.
+- SoA vs AoS and memory coalescing:
+http://stackoverflow.com/questions/17924705/structure-of-arrays-vs-array-of-structures-in-cuda
+- Basic on-the-fly C++ optimisation tips:
+http://www.tantalon.com/pete/cppopt/asyougo.htm
+Some of these things are optimised by the compiler anyway in the modern era of compilers, but in debug mode they won't be, and any programmer is going to spend a lot of time in debug mode, so it pays to implement them.
+- If somehow you have managed to go through programming without understand object oriented code properly, here is a good explanation:
+http://www.roma1.infn.it/people/rahatlou/programmazione++/lec11/lecture-11.pdf
+- The reasons for and uses of, header files:
+http://www.cplusplus.com/forum/articles/10627/
+- Const and it's various meanings depending on placement, how to read it from right to left:
+http://duramecho.com/ComputerInformation/WhyHowCppConst.html
+or https://www.youtube.com/watch?v=Y1KOuFYtTF4
+
+
+You may not end up using All of the above in this project, but I guarantee you will inevitably use it if you end up in the gaming industry or any high-performance C++ role.
+Once all of these tasks have been done and concepts understood by all of you, contact me and we can start.
+There is no real time limit on this but I feel more than two months is a little ridiculous, so probably before that.

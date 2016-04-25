@@ -1,0 +1,186 @@
+To start with the library is component-based ie. you can, mostly, use individual components without having to use the whole thing. What this means is that someone can use one aspect of the library without necessary having to use the whole library. Obviously there are various components which are designed to work with each other and don't function terribly well as standalone objects. However in it's simplest form, the end-user only really has to understand and work with 6 things:
+layers
+backgrounds
+entities
+sprites
+sounds
+music
+
+and the library does everything else for them. So to start I'm going to break this down from the 'easy path' of general usage, then I'm going to describe the subcomponents that people can use if for some reason they don't want to use the general library workflow. Ultimately this library was designed to make things easier, not harder, but someone might have their own SDL engine and find some component useful.
+Although SDL2 itself supports multiple monitors and applications without sound, this library does not as it would complicate things.
+
+
+
+Easy path (general library usage):
+===================================
+
+
+Engine:
+
+At the top level you've got plf::engine, who's initialisation sets up everything including the window, renderer, sound devices, quadtrees etc. It hides all that from the dev but logs it all. All logging goes to std::clog, which can be redirected to a particular file with ofstream and rdbuf(), or with freopen (see demo).
+This was better than passing around a pointer to a log object to every single game object, in this case.
+
+plf also has it's own simple developer logging class, which's as simple as:
+plf::log logger("main_log.txt");
+logger << "Hello I am the log" << std::endl;
+It will close it's file and delete itself when it goes out of scope, so use dynamic allocation and a pointer if you need to pass it between functions etc. plf::engine is the same - it will close and destroy everything it instantiates, including all textures, sounds and the window, once it goes out of scope, so if you need it to be persistent, allocate it dynamically and pass around the pointer.
+
+Getting back to plf::engine, plf::engine also houses public pointers to all of the components it instantiates. I decided allowing the developer to write easily readable code was more important than going down the purist path and allowing get() functions for all components ie. this: engine->sound->do_something(); is more readable than: engine->get_sound_manager()->do_something();.
+
+Once you've created your engine object, you can create layers, backgrounds, etc.
+
+
+Layers:
+
+Layers allow parallax scrolling, and individual quadtrees for separate collision detection on each layer. An object on layer z will never collide with an object on layer x.
+You can set the individual scrolling rate for each layer, so a layer with a scrolling rate of 2 will scroll twice as fast (given the same display_x, display_y coordinate) as a layer with a scroll rate of 1. A layer with a scroll rate of 0 will not scroll, and a layer with a scroll rate of -1 will scroll in reverse (I see limited use for this :) ). Each layer can contain backgrounds and entities. Backgrounds are just sprites - they have no 'mass', do not have any behaviours as such and cannot be collided with. They scroll the same rate as the layer. Entities are the general game objects and are much more complex. Layers also have their own size parameter, meaning that you can resize everything on a layer simply by changing this one parameter.
+Lastly, layers have their own internal z-layers ie. depth layers. These have no impact on collision detection whatsoever and only affect the draw order of different entities ie. if a bunch of entities are at z-level 0, and another bunch of entities are z-level 3, the level-3 entities get drawn second, and hence appear to be 'on top' of the z-level 0 entities. This can be useful in certain situations for example 2.5D games. There are 10 z-levels to each layer. By default each entity is spawned at level 0.
+
+One thing to note at this point is that the 2D universe that layers and entities exist within is defined in a top-down x/y pattern, where 0, 0 is the top-left corner of the universe. Internally entities use floating-point coordinates in order to store sub-pixel movements, but the placement of all objects (backgrounds and entities) is specified as integers.
+
+
+
+Entities:
+
+Most of the work in the library is to do with entities. Entities are created and managed via the entity manager (engine->entities). Once created and assigned an id they can be spawned (ie. cloned) onto any layer multiple times. You can set timing offsets for the spawned entities so that they don't end up all moving exactly the same way or changing sprite frames at exactly the same time, which would look pretty weird.
+Entities are game objects that are made up of States. Each state can have it's own sprite, movement type, collision blocks and sounds. A state can also have no sprite (invisible) and no movement, or no sounds. It's whatever you want it to be. An example of a bunch of states for an entity in a game that represents a wall, might be "solid", "crumbling" and "destroyed" - each would have it's own sprite, collision blocks or lack thereof, sounds or lack thereof. All collision blocks in the plf library are rectangular.
+
+
+
+Movements:
+
+Movements are all derived from a base movement class, and all methods are virtual and can be overridden. By default it contains basic physics functions and stores current physics data, including impulses, velocity and acceleration. There is a default_movement class which can be assigned to a state, which is essentially the base class with no further changes, meaning that it will not move by default during it's update cycle unless impulses/velocities/acceleration are assigned to it.
+The movement class is the one class in the entire library that may need structural changes. Part of your job is to determine whether this is necessary. It is possible that it might be useful to have a movement_manager, just like other areas of the library have sound_manager's etc, which movement types can be stored in via id's. Up to you - whatever makes the most sense.
+One note: the notion of 'impulses' in the library may not match the classical physics definition of that term - what they are in the context of the library is amounts of x/y change to be implemented per millisecond - in either velocity or acceleration - until a specific number of milliseconds specified has elapsed.
+
+
+
+Sprites:
+
+Sprites are created within the sprite manager (engine->sprites) and set up with particular id's. These id's can then be used to assign sprites to different entity states. All graphics in this library are 32-bit, and per-layer transperancy, per-entity transperancy, per-sprite transperancy and per-pixel transparency are all supported. Colour modulation ie. reducing or increasing the levels of red, green or blue in images, is also available per-layer, per-entity and per-sprite.
+
+Sprites do not have to be symmetrical. In other words, their individual frames can have different widths and heights. This is one feature I wanted to support to allow for the following types of things:
+
+
+1st frame: enemy with long tongue (contracted):
+(OOO)
+
+2nd frame: enemy with long tongue (extended):
+(OOO)--------------->
+
+
+In the usual scenario, either we have to make each frame the same length ie. as long as the second frame with the extended tongue,
+or we have to figure out some complicated solution where the tongue is it's own entity and belongs to the enemy's entity etc. I felt this was a sloppy way of doing things, so with this library, you set the anchor-point of the sprite frames (vertical top, middle, or bottom, and horizontal top, middle or bottom), and the individual frames can then be whatever size they want. When the sprite is flipped either horizontally or vertically for display, so are the anchor points.
+This also increases creativity in sprite-making because you no longer have to constrain yourselves to thinking in very narrow ways about what a sprite can reasonably do or look like.
+In addition the parent entity's collision blocks will be overridden by a sprite if the sprite has per-frame collision blocks specified. So in the case of the above example, if touching the enemy itself causes no effects the collision block would probably be non-existent for the first frame, while the second frame might have a collision block that just covered the tongue. This also makes it easier to specify collision areas for things which appear to be in motion between sprite frames.
+
+But it also decreases sprite size in a number of non-collision-based scenarios, for example:
+
+1st frame water fountain:
+
+
+     H
+     H
+    WWW
+
+
+2nd frame water fountain:
+
+\   .    /
+  |    |
+   .   .
+     H
+     H
+    WWW
+
+If we align the sprite frames for our fountain to vertical bottom, horizontal centre, then each frame can just be the size of the actual pixels, whereas with a normal approach we'd have to either have all frames the size of the larger 2nd  frame, or have some kind of particle effect generator instead.
+
+Because all sprite frames get put into texture atlases, the performance detriment of having different sprite sizes is zero as far as I can tell. The video memory saving is probably fairly non-essential in terms of modern computer systems, asides from possibly smartphones, however smaller frame draws are going to result in better performance.
+
+Rotation of sprites is always from the center of the sprite, as opposed to SDL which allows for arbitrary rotation points. For sprites with dissimilar frame resolutions, the center is determined to be the center of the first frame in the sprite.
+
+
+
+Sounds:
+
+Sounds are created within the sound manager (engine->sounds) and set up with particular id's. An entity can have one or more sound_references which access these sounds. In other words an entity state can play more than one sound at once, for example it might have a continuous atmospheric sound associated with it, like a grinding noise, and then an intermittent sound that plays only very occasionally. There are three types of sounds which can be assigned: sound, random_sound, and alternating_sound. 'sound' is just a singular sound - it can be looped, it can be faded in or out, but it's fairly simple. 'random_sound' is a multisound container which will play a random sound selected out of it's contained 'sound's at specific intervals. This could be useful for animal noises, for example, or rustling of leaves in trees. 'alternating_sound' is very similar to 'random_sound' but plays each sound in sequence, one after the other, at the intervals specified.
+A sound can also be played outside of entities via the sound manager or via a pointer to the sound object itself.
+In terms of sounds referenced by entity states, the left-right stereo positioning and the volume of the sound relative to the screen center is controlled via a couple of functions in the sound manager. These specify how far entities have to be from the center of the screen horizontally before changes to their audible stereo position occur, and how far (both horizontally and vertically) an entity has to be from the middle of the screen before volume attenuation occurs. This setup may possibly need work, but may be outside of the scope of this project.
+
+
+
+Music:
+
+Music is entirely controlled by the developer and does not correlate to anything that layers, entities, sprites or sounds do. It is loaded and managed via the music manager (engine->music). Like sound, music also has three types: music, random_music and alternating_music. The behaviour variation is much the same as the sound types.
+In addition music tracks can have 'intro' sections. This allows for two things: 1. A song can have a non-looping intro which is only played once, whereas the rest of the song is looped over and over. 2. because of a limitation in the SDL_mixer library, normally under SDL_mixer it is impossible to fade between songs. However having an intro section to a song allows for fading between different music tracks, as long as the fade length matches or is less than the length of the intro section.
+So, music can be faded in, faded out, and provided there is an intro section on the following track, faded inbetween.
+SDL_mixer is a bit of a hack of a library, but it's stable, works across platforms which cannot be said for something like openAL, and does the job generally speaking.
+
+
+
+Incidental topics:
+-------------------
+
+
+Input:
+
+Input is not something I decided to create a wrapper or format for in the library, as I saw no advantage over the SDL way of handling input, which is quite reasonable and sensible. However if you find a better way of doing it feel free to do so. But for the moment, all input must be handled via the SDL library commands.
+
+
+
+Collision handling:
+
+Collision handling is left entirely up to the developer. You supply the layer with an empty std::vector of plf::entity std::pair's (as per demo), and it fills it with all the pairs of colliding objects. You can also obtain all collisions for all layers at once. Once you have the collisions, you can determine what to do with them, which in a normal game would be based on the id's of the entities involved and what state those entities were currently in.
+
+
+
+Draw culling:
+
+2D draw culling is performed by the sub-sprite texture class, in the case where the entire image is offscreen. This was found to improve performance in some scenarios. Otherwise SDL takes care of any partial draw-culling.
+
+
+
+
+Individual component path (for people with their own SDL libraries. or Whatever):
+=================================================================================
+
+
+Almost everything in the library can be used independently of each other, when they do not depend explicitly on them, as long as you provide the necessary parameters. Sprites can be used and drawn independently of entities, which can also be used and drawn independently of layers. Sounds can be played directly via the sound manager or simply via your own pointers to the sounds, completely independently of entities.
+In addition you can go lower than the sprite class and work with plf::textures (which are used in the frames of sprites) directly. Here is a list of classes which developers will never need to touch but can use if they choose to do so:
+plf::texture - base level texture class
+plf::multitexture - base level texture class for images which are larger than the texture atlas size, and/or larger than the video card's maximum texture size, for example large background images
+plf::texture_manager - manages and instantiates all textures and multitextures.
+plf::window - window class instantiated by plf::engine. Wraps around SDL_Window and provides additional functions
+plf::renderer - renderer class instantiated by plf::engine. Wraps around SDL_Renderer and provides additional functions
+plf::quadtree - persistent quadtree class. tied in fairly deeply with plf::entity, so unlikely to be useful by itself. Used by plf::layer.
+plf::atlas - the dynamic texture atlas class. Used by plf::texture and plf::multitexture to store images and image fragments respectively. Follows a fairly simple atlas pattern, so to optimize atlas surface use you should load in your images in order from largest to smallest. By default the atlases created are the smaller of either the (a) logical dimensions of the renderer, or (b) the maximum texture dimensions for the video card, either which is further reduced to the nearest power of two in both width and height. This is for two reasons: (a) older video cards only allow power of two dimensions for textures and newer cards tend to work better with them (b) renderers like directx keep a copy of the texture memory in main memory so that the OS can switch between directx applications without losing textures, so if the max video card texture resolution is too high, you end up with a ton of main memory being used by the application for no good reason.
+
+In addition there are some utility and math functions which're used by multiple classes, in plf_math.h and plf_utility.h respectively.
+
+Here is the general group dependency tree for the library, ignoring plf_engine which is dependent on all groups, and ignoring individual classes within the groups (for example, random_sound is a member of the sound group):
+
+
+           layers
+            / \  \------------------
+           /   \                    \
+          /     \                    \
+backgrounds   entities                \
+    \        /  \     \--------------  \
+     \      /    \       \           \  \
+      \    /      \       \           \  \
+     sprites     sounds  movements   quadtrees
+      /
+     /
+    /
+textures
+  |
+  |
+  |
+atlas
+
+
+
+These relationships are, with the current exception of quadtrees, which depend on entities, top-down ie. lower groups do not depend on higher groups.
+So you can draw a texture without needing a sprite, and you can put an image into an atlas without needing a texture, and you may create and use a sprite without needing an entity, or a layer. All of these except for the layer, sound, movement and quadtree classes also depend on the renderer class.
+
+
