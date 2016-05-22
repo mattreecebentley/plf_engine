@@ -181,6 +181,11 @@ int main( int argc, char* args[] )
 			++num_loops;
 			SDL_PollEvent(&event);
 
+			if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
+			{
+				delete engine;
+				return 0;
+			}
 
 			// Here is one method for making sure we're not trying to display more than 60 frames per second:
 			// Simply burn off any remaining time by repeatedly checking against the clock until at least 14ms has passed.
@@ -194,9 +199,9 @@ int main( int argc, char* args[] )
 			
 			sdl_time = SDL_GetTicks(); // reset sdl_time for next frame.
 
-		} while (event.type != SDL_QUIT && sdl_time < time_for_more_spawn && !(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE));
+		} while (sdl_time < time_for_more_spawn);
 
-	} while (++doloop != 4 && event.type != SDL_QUIT && !(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE));
+	} while (++doloop != 4);
 
 	
 	
@@ -209,6 +214,12 @@ int main( int argc, char* args[] )
 	do
 	{
 		SDL_PollEvent(&event);
+
+		if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
+		{
+			delete engine;
+			return 0;
+		}
 
 		engine->layers->update_layers(delta);
 		engine->layers->draw_layers(delta, (int)display_x, 0);
@@ -233,7 +244,8 @@ int main( int argc, char* args[] )
 		sdl_time = SDL_GetTicks();
 		display_x += (double)delta / 10.0;
 		++num_loops;
-	} while (event.type != SDL_QUIT && display_x < 3000 && !(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE));
+
+	} while (display_x < 3000);
 
 	logmain << "number of loops: " << num_loops << std::endl;
 
@@ -274,11 +286,11 @@ int main( int argc, char* args[] )
 
 	unsigned int counter3 = 0, frame_counter = 1;
 
-	while (counter3++ != 3 && event.type != SDL_QUIT)
+	while (counter3++ != 3)
 	{
 		angle = 0;
 		
-		while (angle++ != 360 && event.type != SDL_QUIT)
+		while (angle++ != 360)
 		{
 			SDL_PollEvent(&event);
 			
@@ -300,11 +312,18 @@ int main( int argc, char* args[] )
 						++location.x;
 						break;
 					case SDLK_ESCAPE:
-						event.type = SDL_QUIT;
+						delete engine;
+						return 0;
 					default:
 						break;
 				}
 			}
+			else if (event.type == SDL_QUIT)
+			{
+				delete engine;
+				return 0;
+			}
+
 
 
 			engine->renderer->clear_renderer();
@@ -391,7 +410,7 @@ int main( int argc, char* args[] )
 	engine->renderer->display_frame();
 	
 	
-	while(event.type != SDL_QUIT)
+	while(true)
 	{
 		SDL_PollEvent(&event);
 
@@ -407,7 +426,8 @@ int main( int argc, char* args[] )
 					atlas_number = (atlas_number == 1) ? atlas_number: atlas_number - 1;
 					break;
 				case SDLK_ESCAPE:
-					event.type = SDL_QUIT;
+					delete engine;
+					return 0;
 				default:
 					break;
 			}
@@ -416,13 +436,18 @@ int main( int argc, char* args[] )
 			SDL_RenderCopy(engine->renderer->get(), engine->atlas_manager->get_atlas_texture(atlas_number), &source, &source); // Using source as destination coordinates here
 			engine->renderer->display_frame();
 		}
+		else if(event.type == SDL_QUIT)
+		{
+			delete engine;
+			return 0;
+		}
 
 		SDL_Delay(150);
 	}
 
 	
 	
-	// Cleanup:
+	// Cleanup - this point will actually never be reached because of the exit conditions in the above loop:
 	
 	// You don't have to worry about deleting sprites, textures, etc - the engine and subcomponent destructors will do it all for you.
 	delete engine; 

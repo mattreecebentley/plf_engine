@@ -27,7 +27,10 @@ sound::sound(const char *file_name)
 
 sound::~sound()
 {
-	Mix_FreeChunk(sample);
+	if (sample != NULL)
+	{
+		Mix_FreeChunk(sample);
+	}
 }
 
 

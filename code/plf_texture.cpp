@@ -40,7 +40,10 @@ texture::texture(plf::renderer *p_renderer, plf::atlas_manager *atlas_manager, S
 
 texture::~texture()
 {
-	atlas->remove_surface(node);
+	if (node != NULL)
+	{
+		atlas->remove_surface(node);
+	}
 }
 
 
@@ -193,6 +196,7 @@ multitexture::~multitexture()
 	}
 
 	delete [] segments;
+	renderer_width = 0;
 }
 
 

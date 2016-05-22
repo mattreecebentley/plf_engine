@@ -231,8 +231,9 @@ atlas_node * atlas::add_surface(SDL_Surface *new_surface)
 void atlas::remove_surface(atlas_node *node)
 {
 	assert(node != NULL);
-	assert(node->image_rect == NULL); // attempt to delete image in node where image doesn't exist - shouldn't happen
+	assert(node->image_rect != NULL); // attempt to delete image in node where image doesn't exist - shouldn't happen
 	
+	delete node->image_rect;
 	node->image_rect = NULL;
 	atlas_node *parent = node->parent_node;
 	bool all_empty = true;
