@@ -290,8 +290,16 @@ void entity::set_location(const double x, const double y)
 {
 	game_x = x;
 	game_y = y;
-	
 }
+
+
+
+void entity::get_location(double &x, double &y)
+{
+	x = game_x;
+	y = game_y;
+}
+
 
 
 void entity::set_sprite_time_offset(const unsigned int time_offset)
@@ -454,7 +462,6 @@ void entity::get_current_collision_blocks(plf::colony<SDL_Rect> &current_collisi
 		current_rect->h = static_cast<int>(static_cast<double>(current_rect->h) * size);
 	}
 }
-
 
 
 void entity::set_transparency(const Uint8 new_transparency)

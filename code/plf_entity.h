@@ -65,6 +65,7 @@ public:
 	void set_sprite_time_offset(const unsigned int time_offset);
 	void set_movement_time_offset(const unsigned int time_offset);
 	void set_location(const double x, const double y);
+	void get_location(double &x, double &y);
 	void set_global_state_time_offset(const unsigned int offset);
 	void set_size(const double resize);
 	void set_allowed_area(const int x, const int y, const int w, const int h);
