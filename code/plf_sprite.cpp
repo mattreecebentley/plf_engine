@@ -498,7 +498,7 @@ int sprite::add_frames_from_tile(const char *image_filename, const unsigned int 
 	plf_fail_if (tiles_surface == NULL, "plf::sprite add_frames_from_tile Error: Unable to load image file '" << image_filename << "' to surface. SDL Error: " << SDL_GetError());
 
 	const int total_width = static_cast<int>(number_of_frames * frame_width);
-	assert(tiles_surface->w == total_width); // Width of image not equal to specified number of frames * specified frame width.
+	plf_assert(tiles_surface->w == total_width, "Width of image not equal to specified number of frames * specified frame width.");
 
     // Create a frame surface for copying the individual frames to:
 	SDL_Surface *frame_surface = create_surface(frame_width, tiles_surface->h);
@@ -506,12 +506,14 @@ int sprite::add_frames_from_tile(const char *image_filename, const unsigned int 
     plf_fail_if (frame_surface == NULL, "plf::sprite add_frames_from_tile Error: could not create temporary frame_surface.");
 
 	SDL_SetSurfaceBlendMode(tiles_surface, SDL_BLENDMODE_NONE);
+	SDL_SetSurfaceBlendMode(frame_surface, SDL_BLENDMODE_NONE);
 	
 	SDL_Rect source_rectangle = {0, 0, static_cast<int>(frame_width), tiles_surface->h};
 
 	for (; source_rectangle.x != total_width; source_rectangle.x += frame_width)
 	{
 		// Copy frame tile to it's own surface:
+		SDL_FillRect(frame_surface, NULL, 0x000000);
 		plf_fail_if (SDL_BlitSurface(tiles_surface, &source_rectangle, frame_surface, NULL) < 0, "plf::sprite add_frames_from_tile Error: Unable to blit surface to surface. x = " << source_rectangle.x << ". SDL Error: " << SDL_GetError());
 
 		frames.push_back(frame());

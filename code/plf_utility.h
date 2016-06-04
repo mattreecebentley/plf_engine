@@ -47,7 +47,7 @@ std::string get_timedate_string();
 
 
 
-// Like a reverse-assert, but doesn't get turned off in debug compile modes:
+// Like a reverse-assert, but doesn't get turned off in non-debug compile modes:
 #define plf_fail_if(condition, message) \
 	{ \
 		if (condition) \
