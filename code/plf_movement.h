@@ -18,14 +18,6 @@ protected:
 		double x, y;
 		unsigned int milliseconds;
 
-		inline impulse & operator = (const impulse &c)
-		{
-			x = c.x;
-			y = c.y;
-			milliseconds = c.milliseconds;
-			return *this;
-		};
-
 		inline void clear()
 		{
 			x = 0;
