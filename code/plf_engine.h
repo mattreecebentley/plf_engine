@@ -15,6 +15,7 @@
 #include "plf_music.h"
 #include "plf_entity.h"
 #include "plf_layer.h"
+#include "plf_math.h"
 
 
 

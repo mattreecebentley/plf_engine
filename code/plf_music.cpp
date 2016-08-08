@@ -10,6 +10,7 @@
 #include "plf_utility.h"
 #include "plf_sound.h"
 #include "plf_music.h"
+#include "plf_math.h"
 
 
 namespace plf
@@ -489,7 +490,7 @@ void random_music::play(Uint8 volume, const bool looping)
 
 	do
 	{
-		unsigned int random_number = rand() % random_chance_sum;
+		unsigned int random_number = xor_rand() % random_chance_sum;
 		unsigned int current_chance_level = 0;
 		
 		for (std::vector<randomised_music>::iterator music_iterator = musics.begin(); music_iterator != musics.end(); ++music_iterator)
@@ -539,7 +540,7 @@ void random_music::fadein_play(unsigned int milliseconds, Uint8 volume, const bo
 	
 	do
 	{
-		unsigned int random_number = rand() % random_chance_sum;
+		unsigned int random_number = xor_rand() % random_chance_sum;
 		unsigned int current_chance_level = 0;
 		
 		for (std::vector<randomised_music>::iterator music_iterator = musics.begin(); music_iterator != musics.end(); ++music_iterator)

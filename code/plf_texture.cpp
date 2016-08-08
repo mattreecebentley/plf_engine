@@ -9,6 +9,7 @@
 #include "plf_texture.h"
 
 
+
 namespace plf
 {
 
@@ -99,7 +100,6 @@ int texture::draw(int x, int y, const double size, const double angle, SDL_Point
 
 	return return_value;
 }
-
 
 
 
@@ -339,8 +339,6 @@ int multitexture::draw(int x, int y, const double size, const double angle, SDL_
 
 	return return_value;
 }
-
-
 
 
 

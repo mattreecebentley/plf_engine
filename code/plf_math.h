@@ -12,13 +12,6 @@ struct double_xy
 {
 	double x, y;
 
-	double_xy & operator = (const double_xy &c)
-	{
-		x = c.x;
-		y = c.y;
-		return *this;
-	}
-
 	void clear()
 	{
 		x = 0;
@@ -29,6 +22,7 @@ struct double_xy
 
 unsigned int round_down_to_power_of_two(unsigned int x);
 
+unsigned int xor_rand();
 
 void rotate_point_around_pivot(double &x, double &y, const double pivot_x, const double pivot_y, double angle);
 

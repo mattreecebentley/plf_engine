@@ -7,6 +7,8 @@
 #include <string>
 
 #include "plf_stack.h"
+#include "plf_colony.h"
+#include "plf_math.h"
 
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL.h>
@@ -145,7 +147,7 @@ class sound_manager
 {
 private:
 	plf::stack<unsigned int> free_channels;
-	std::vector<unsigned int> one_shot_channels;
+	plf::colony<unsigned int> one_shot_channels;
 	std::map<std::string, sound *> sounds;
 
 	SDL_Point sound_center;

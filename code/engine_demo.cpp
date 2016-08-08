@@ -131,17 +131,17 @@ int main( int argc, char* args[] )
 		// Spawn tons of birds:
 		for (unsigned int counter = 0; counter != 920; counter++)
 		{
-			bird_layer1->spawn_entity("eagle_flock", bird_entity, static_cast<unsigned int>(display_x) + rand() % 600, (rand() % 400), rand() % 900, rand() % 1500, (static_cast<double>(rand() % 25) / 100) + .25, 0);
+			bird_layer1->spawn_entity("eagle_flock", bird_entity, static_cast<unsigned int>(display_x) + plf::xor_rand() % 600, (plf::xor_rand() % 400), plf::xor_rand() % 900, plf::xor_rand() % 1500, (static_cast<double>(plf::xor_rand() % 25) / 100) + .25, 0);
 		}
 
 		for (unsigned int counter = 0; counter != 920; counter++)
 		{
-			bird_layer2->spawn_entity("eagle_flock", bird_entity, static_cast<unsigned int>(display_x) + rand() % 600, (rand() % 400), rand() % 900, rand() % 1500, (static_cast<double>(rand() % 25) / 100) + .55, 1);
+			bird_layer2->spawn_entity("eagle_flock", bird_entity, static_cast<unsigned int>(display_x) + plf::xor_rand() % 600, (plf::xor_rand() % 400), plf::xor_rand() % 900, plf::xor_rand() % 1500, (static_cast<double>(plf::xor_rand() % 25) / 100) + .55, 1);
 		}
 
 		for (unsigned int counter = 0; counter != 920; counter++)
 		{
-			bird_layer3->spawn_entity("eagle_flock", bird_entity, static_cast<unsigned int>(display_x) + rand() % 600, (rand() % 400), rand() % 900, rand() % 1500, (static_cast<double>(rand() % 25) / 100) + .75, 2);
+			bird_layer3->spawn_entity("eagle_flock", bird_entity, static_cast<unsigned int>(display_x) + plf::xor_rand() % 600, (plf::xor_rand() % 400), plf::xor_rand() % 900, plf::xor_rand() % 1500, (static_cast<double>(plf::xor_rand() % 25) / 100) + .75, 2);
 		}
 
 
@@ -157,7 +157,7 @@ int main( int argc, char* args[] )
 			{
 				// Change state for second bird in collision:
 				pair_iterator->second->set_current_state("exploding");
-				pair_iterator->second->set_sprite_time_offset(rand() % 500);
+				pair_iterator->second->set_sprite_time_offset(plf::xor_rand() % 500);
 			}
 
 			collisions.clear();

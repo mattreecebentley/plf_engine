@@ -9,8 +9,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
+#include "plf_stack.h"
+#include "plf_colony.h"
 #include "plf_sound.h"
 #include "plf_utility.h"
+#include "plf_math.h"
 
 
 namespace plf
@@ -250,7 +253,7 @@ int random_sound::play(const int channel, const bool loop)
 		return 0;
 	}
 
-	unsigned int random_number = rand() % random_chance_sum;
+	unsigned int random_number = xor_rand() % random_chance_sum;
 	unsigned int current_chance_level = 0;
 	sound *sound_to_play = NULL;
 	
@@ -288,7 +291,7 @@ int random_sound::fadein_play(const int channel, const bool loop, const unsigned
 	}
 
 
-	unsigned int random_number = rand() % random_chance_sum;
+	unsigned int random_number = xor_rand() % random_chance_sum;
 	unsigned int current_chance_level = 0;
 	sound *sound_to_play = NULL;
 
@@ -450,7 +453,7 @@ void sound_reference::play(const int x, const int y)
 		
 		if (delay_random != 0) // to avoid modulo by zero
 		{
-			delay_remaining += rand() % delay_random;
+			delay_remaining += xor_rand() % delay_random;
 		}
 
 		return;
@@ -581,7 +584,7 @@ int sound_reference::update(const unsigned int delta_time, const int x, const in
 
 				if (delay_random != 0) // to avoid modulo by zero
 				{
-					delay_remaining += rand() % delay_random;
+					delay_remaining += xor_rand() % delay_random;
 				}
 
 				return 0;
@@ -597,7 +600,7 @@ int sound_reference::update(const unsigned int delta_time, const int x, const in
 
 				if (delay_random != 0) // to avoid modulo by zero
 				{
-					delay_remaining += rand() % delay_random;
+					delay_remaining += xor_rand() % delay_random;
 				}
 
 				return 0;
@@ -696,7 +699,7 @@ unsigned int sound_manager::get_free_channel()
 	if (!(one_shot_channels.empty()))
 	{
 		// Check the one-shot sound playback channels to see if any of them have expired:
-		for (std::vector<unsigned int>::iterator channel_iterator = one_shot_channels.begin(); channel_iterator != one_shot_channels.end(); )
+		for (plf::colony<unsigned int>::iterator channel_iterator = one_shot_channels.begin(); channel_iterator != one_shot_channels.end(); )
 		{
 			if (!(Mix_Playing(*channel_iterator) || Mix_Paused(*channel_iterator)))
 			{
@@ -756,7 +759,7 @@ void sound_manager::play_sound(const std::string &id, const Uint8 volume, const 
 	plf_assert(sound != sounds.end(), "plf::sound_manager play_sound error: sound with id '" << id << "' not found. Aborting");
 	
 	unsigned int sound_channel = get_free_channel(); // This is returned in the next get_free_channel call once the sound has finished playing
-	one_shot_channels.push_back(sound_channel); 
+	one_shot_channels.insert(sound_channel); 
 
 	sound->second->play(sound_channel, 0);
 }
@@ -807,7 +810,7 @@ void sound_manager::play_sound_location(const std::string &id, const int x, cons
 	}
 
 	unsigned int sound_channel = get_free_channel(); // This is returned in the next get_free_channel call once the sound has finished playing
-	one_shot_channels.push_back(sound_channel); 
+	one_shot_channels.insert(sound_channel); 
 
 	Mix_Volume(sound_channel, current_volume);
 	Mix_SetPanning(sound_channel, 255 - current_pan, current_pan);
