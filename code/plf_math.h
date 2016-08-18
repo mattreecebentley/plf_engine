@@ -22,7 +22,23 @@ struct double_xy
 
 unsigned int round_down_to_power_of_two(unsigned int x);
 
+
 unsigned int xor_rand();
+
+
+inline unsigned int fast_mod(const unsigned int input, const unsigned int ceiling) // courtesy of chandler carruth
+{
+    // apply the modulo operator only when needed
+    // (i.e. when the input is greater than the ceiling)
+    return (input >= ceiling) ? input % ceiling : input;
+}
+
+
+inline unsigned int rand_within(const unsigned int range)
+{
+	return fast_mod(xor_rand(), range);
+}
+
 
 void rotate_point_around_pivot(double &x, double &y, const double pivot_x, const double pivot_y, double angle);
 

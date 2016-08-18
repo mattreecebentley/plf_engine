@@ -253,7 +253,7 @@ int random_sound::play(const int channel, const bool loop)
 		return 0;
 	}
 
-	unsigned int random_number = xor_rand() % random_chance_sum;
+	unsigned int random_number = rand_within(random_chance_sum);
 	unsigned int current_chance_level = 0;
 	sound *sound_to_play = NULL;
 	
@@ -291,7 +291,7 @@ int random_sound::fadein_play(const int channel, const bool loop, const unsigned
 	}
 
 
-	unsigned int random_number = xor_rand() % random_chance_sum;
+	unsigned int random_number = rand_within(random_chance_sum);
 	unsigned int current_chance_level = 0;
 	sound *sound_to_play = NULL;
 
@@ -453,7 +453,7 @@ void sound_reference::play(const int x, const int y)
 		
 		if (delay_random != 0) // to avoid modulo by zero
 		{
-			delay_remaining += xor_rand() % delay_random;
+			delay_remaining += rand_within(delay_random);
 		}
 
 		return;
@@ -584,7 +584,7 @@ int sound_reference::update(const unsigned int delta_time, const int x, const in
 
 				if (delay_random != 0) // to avoid modulo by zero
 				{
-					delay_remaining += xor_rand() % delay_random;
+					delay_remaining += rand_within(delay_random);
 				}
 
 				return 0;
@@ -600,7 +600,7 @@ int sound_reference::update(const unsigned int delta_time, const int x, const in
 
 				if (delay_random != 0) // to avoid modulo by zero
 				{
-					delay_remaining += xor_rand() % delay_random;
+					delay_remaining += rand_within(delay_random);
 				}
 
 				return 0;

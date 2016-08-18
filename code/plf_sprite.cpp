@@ -9,6 +9,7 @@
 #include "plf_texture.h"
 #include "plf_sprite.h"
 #include "plf_colony.h"
+#include "plf_math.h"
 
 
 namespace plf
@@ -78,7 +79,7 @@ int sprite::draw(unsigned int &current_sprite_time, const unsigned int delta_tim
 		{
 			if (loop)
 			{
-				current_sprite_time = current_sprite_time % total_sprite_time; // removes all full loops of sprite animation
+				current_sprite_time = fast_mod(current_sprite_time, total_sprite_time); // removes all full loops of sprite animation
 			}
 			else
 			{
@@ -325,7 +326,7 @@ int sprite::update_frame(unsigned int &current_frame_number, unsigned int &curre
 		if (loop)
 		{
 			unsigned int frame_timing = 0;
-			current_sprite_time = current_sprite_time % total_sprite_time; // removes all full loops of sprite animation
+			current_sprite_time = fast_mod(current_sprite_time, total_sprite_time);; // removes all full loops of sprite animation
 			current_frame_number = 0; // Reset frame back to beginning frame
 			std::vector<frame>::iterator current_frame = frames.begin();
 
@@ -383,7 +384,7 @@ int sprite::find_frame(unsigned int current_sprite_time, unsigned int &current_f
 	
 	if (current_sprite_time > total_sprite_time)
 	{
-		current_sprite_time = current_sprite_time % total_sprite_time; // removes all full loops of sprite animation
+		current_sprite_time = fast_mod(current_sprite_time, total_sprite_time); // removes all full loops of sprite animation
 	}
 	
 	current_frame_number = 0; // Reset frame back to beginning frame
