@@ -627,7 +627,7 @@ void sound_reference::resume()
 {
 	if (paused && current_channel != -2)
 	{
-		Mix_Pause(current_channel);
+		Mix_Resume(current_channel);
 	}
 }
 
