@@ -77,7 +77,7 @@ private:
 	void add_block(entity_block *new_block);
 	int move_block_to_subnode(entity_block *new_block);
 	void check_children_then_consolidate(quadtree *child_node); // Find out if child nodes are empty, if so delete them and this.
-	
+
 public:
 	quadtree(quadtree *_parent_node, const int _left, const int _right, const int _top, const int _bottom, const unsigned int _minimum_width, const unsigned int _minimum_height, const unsigned int _entity_limit = 3);
 	~quadtree();
@@ -87,7 +87,7 @@ public:
 
 	void add_entity(entity *new_entity);
 	void delete_entity(entity *entity); // Delete any blocks from this node associated with this entity
-	void consolidate_node(); // After deleting blocks, teset this node ot see whether it's empty and whether it and it's parents can be consolidated
+	void consolidate_node(); // After deleting blocks, test this node to see whether it's empty and whether it and it's parents can be consolidated
 
 	void get_collisions(std::vector< std::pair<entity *, entity *> > &collision_pairs);
 

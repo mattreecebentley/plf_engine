@@ -31,14 +31,14 @@ private:
 	std::string id;
 	plf::quadtree *quadtree;
 	SDL_Rect boundaries;
-	
+
 	rgb *layer_colormod;
 	double move_relative_xy; // Variable for parallax layer movement (both horizontal and vertical movement),
-							// 0 = does not move
-							// 0.25 = moves a quarter as much as player layer
-							// 1 = moves at same rate as player layer (same layer-ish backgrounds)
-							// 1.5 = moves at 150% rate of player layer (in front of player layer, for example)
-							// -1 = moves at the same rate as player, but backwards
+							// 0 = layer does not move
+							// 0.25 = moves quarter of regular movement
+							// 1 = moves at normal rate
+							// 1.5 = moves at 150% rate of of normal rate
+							// -1 = moves at the same rate, but backwards
 	unsigned int total_number_of_entities;
 	Uint8 layer_transparency;
 public:
