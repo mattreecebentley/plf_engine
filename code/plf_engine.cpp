@@ -49,17 +49,12 @@ engine::engine():
 	std::clog << "SDL_img initialised with PNG and JPEG support." << std::endl;
 
 
-
 	// Initialise sound and music:
 	plf_fail_if (SDL_Init(SDL_INIT_AUDIO) < 0, "plf::engine constructor: SDL audio could not initialize! SDL_Error: " << SDL_GetError());
 	std::clog << "SDL audio initialised." << std::endl;
 
 
-	// Initialise SDM_Mixer for OGG and FLAC only:
-	const int support_flags = MIX_INIT_OGG|MIX_INIT_FLAC;
-
-	plf_fail_if ((Mix_Init(support_flags) & support_flags) != support_flags, "plf::engine constructor: SDL_mixer OGG or FLAC support could not initialize! Quitting.");
-
+	// Initialise SDL_Mixer for OGG and FLAC only:
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) != 0)
 	{
 		std::clog << "plf::engine constructor: SDL_mixer OpenAudio could not initialize at 44khz! Error: " << Mix_GetError() << std::endl;
@@ -67,6 +62,10 @@ engine::engine():
 		// Try 48khz instead:
 		plf_fail_if (Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, 2, 1024) != 0, "plf::engine constructor: SDL_mixer OpenAudio could not initialize at 48khz. Error: " << Mix_GetError());
 	}
+
+	const int support_flags = MIX_INIT_OGG|MIX_INIT_FLAC;
+
+	plf_fail_if ((Mix_Init(support_flags) & support_flags) != support_flags, "plf::engine constructor: SDL_mixer OGG or FLAC support could not initialize! Quitting.");
 }
 
 
