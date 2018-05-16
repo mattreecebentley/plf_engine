@@ -7,37 +7,37 @@
 namespace plf
 {
 
-class log
-{
-private:
-	std::ofstream logfile;
-
-public:
-	log(const char *logfile_name, const bool append = false);
-	~log();
-
-	template <typename logtemplate>
-   friend log & operator << (log& log, const logtemplate& value)
+	class log
 	{
-		if (log.logfile.is_open())
+	private:
+		std::ofstream logfile;
+	
+	public:
+		log(const char *logfile_name, const bool append = false);
+		~log();
+	
+		template <typename logtemplate>
+	   friend log & operator << (log& log, const logtemplate& value)
 		{
-			log.logfile << value;
-			log.logfile.flush();
+			if (log.logfile.is_open())
+			{
+				log.logfile << value;
+				log.logfile.flush();
+			}
+			return log;
 		}
-		return log;
-	}
-
-
-   friend log & operator << (log& log, std::ostream& (*pf) (std::ostream&))
-	{
-		if (log.logfile.is_open())
+	
+	
+	   friend log & operator << (log& log, std::ostream& (*pf) (std::ostream&))
 		{
-			log.logfile << pf;
-			log.logfile.flush();
+			if (log.logfile.is_open())
+			{
+				log.logfile << pf;
+				log.logfile.flush();
+			}
+			return log;
 		}
-		return log;
-	}
-};
+	};
 
 }
 
